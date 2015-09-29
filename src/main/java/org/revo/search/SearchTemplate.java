@@ -1,21 +1,22 @@
 package org.revo.search;
 
-import java.util.List;
-
-import javax.transaction.Transactional;
-
 import org.apache.lucene.search.Query;
+import org.hibernate.search.annotations.Field;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Created by revo on 26/09/15.
+ * Created by ashraf on 9/28/2015.
  */
 @Repository
 @Transactional
-public class UserSearch {
+public class SearchTemplate {
     @Autowired
     FullTextEntityManager fTtEM;
 
@@ -28,7 +29,9 @@ public class UserSearch {
     }
 
     public <T> List<T> search(String c, Class<T> TClass, String... fields) {
-        return fTtEM.createFullTextQuery(GetQuery(c, QueryBuild(TClass), fields), TClass).
-                getResultList();
+        if (fields.length == 0) fields = Arrays.asList(TClass.getDeclaredFields()).stream()
+                .filter(field -> field.isAnnotationPresent(Field.class))
+                .map(field -> field.getName()).toArray(String[]::new);
+        return fTtEM.createFullTextQuery(GetQuery(c, QueryBuild(TClass), fields), TClass).getResultList();
     }
 }

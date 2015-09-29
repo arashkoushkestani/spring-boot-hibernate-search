@@ -1,9 +1,6 @@
 package org.revo.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
@@ -18,19 +15,15 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Indexed
+@Getter
+@Setter
 public class Tags {
     @Id
     @GeneratedValue
-    @Getter
-    @Setter
     private Long id;
     @Field
-    @Getter
-    @Setter
     private String name;
     @ManyToMany(fetch = FetchType.LAZY)
-    @Getter
-    @Setter
     private Set<Posts> posts = new HashSet<>();
 
     @Transient
